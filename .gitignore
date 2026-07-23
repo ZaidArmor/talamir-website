@@ -1,0 +1,118 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# TALAMIR website — strict ignore policy
+#
+# Principle: ignore anything generated, local, or secret. Track everything a
+# fresh clone needs to build, test, verify and run — including the lockfile,
+# the build configuration, and the workspace-local developer setup.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.*
+jspm_packages/
+
+# ── build and export output ──────────────────────────────────────────────────
+.next/
+out/
+build/
+dist/
+.vercel/
+.netlify/
+
+# ── framework and tooling caches ─────────────────────────────────────────────
+.turbo/
+.swc/
+.eslintcache
+.stylelintcache
+.cache/
+.parcel-cache/
+*.tsbuildinfo
+
+# ── test artifacts, coverage, reports ────────────────────────────────────────
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+vitest.config.*.timestamp*
+*.lcov
+
+# ── screenshots and traces produced by tests ─────────────────────────────────
+screenshots/
+__screenshots__/
+*.trace.zip
+
+# ── browser profiles and driver downloads ────────────────────────────────────
+.browser-profiles/
+ms-playwright/
+.chromium/
+.puppeteer/
+
+# ── logs ─────────────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ── local environment files ──────────────────────────────────────────────────
+# `.env.example` is tracked deliberately and holds placeholder values only.
+.env
+.env.*
+!.env.example
+
+# ── secrets, keys, certificates, deployment credentials ──────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.crt
+*.cer
+id_rsa*
+id_ed25519*
+secrets/
+credentials/
+*credentials*.json
+*secret*.json
+service-account*.json
+.npmrc
+.netrc
+
+# ── temporary files ──────────────────────────────────────────────────────────
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig
+*.rej
+*~
+*.swp
+*.swo
+
+# ── editor-local settings (shared config is tracked explicitly) ──────────────
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+.fleet/
+.history/
+
+# NOTE: `.claude/launch.json` is intentionally NOT ignored. It is the
+# workspace-local developer setup that makes this project self-contained —
+# it references only this workspace, contains no secret and no external path.
+
+# ── operating-system metadata ────────────────────────────────────────────────
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/

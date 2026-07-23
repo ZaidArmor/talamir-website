@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Token variables are injected at runtime by the root layout, not written here.
+ * This file holds only what the tokens cannot express: resets, direction
+ * handling, focus behaviour, and the motion primitives.
+ */
+
+@layer base {
+  html {
+    /* Arabic is the primary reading experience; Latin pages override on <html>. */
+    font-family: var(--font-arabic);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html[lang='en'] {
+    font-family: var(--font-latin);
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-text);
+    font-size: var(--text-body);
+    line-height: var(--leading-normal);
+  }
+
+  /* Fluid display type. The token is the desktop anchor; this clamps down to
+     mobile without a second set of breakpoint classes on every heading. */
+  .text-display {
+    font-size: clamp(2.25rem, 1.4rem + 4.2vw, var(--text-display));
+  }
+  .text-h1 {
+    font-size: clamp(1.875rem, 1.35rem + 2.6vw, var(--text-h1));
+  }
+  .text-h2 {
+    font-size: clamp(1.5rem, 1.2rem + 1.5vw, var(--text-h2));
+  }
+
+  /* One focus treatment for the whole site. Uses the dedicated `focus` role,
+     which is kept independent of `accent` so it can stay high-contrast even if
+     a future identity picks a pale accent. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Latin numerals and code inside Arabic pages must not inherit RTL ordering. */
+  [dir='rtl'] code,
+  [dir='rtl'] kbd,
+  [dir='rtl'] samp,
+  [dir='rtl'] .force-ltr {
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: start;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-subtle);
+    color: var(--color-text);
+  }
+}
+
+@layer components {
+  /*
+   * Scroll-reveal primitive. The element is rendered visible by default and
+   * only hidden once JS confirms the observer is running — so with JS disabled,
+   * or if the observer fails, all content stays readable.
+   */
+  .reveal[data-reveal='pending'] {
+    opacity: 0;
+    transform: translateY(var(--motion-distance));
+  }
+
+  .reveal[data-reveal='shown'] {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--duration-slow) var(--ease-entrance),
+      transform var(--duration-slow) var(--ease-entrance);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Skip link — visible only when focused. */
+  .skip-link {
+    position: absolute;
+    inset-inline-start: 1rem;
+    top: -100%;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-surface);
+    border: var(--border-width) solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+  }
+  .skip-link:focus {
+    top: 1rem;
+  }
+}
+
+/*
+ * Accessibility floor for the entire motion strategy.
+ *
+ * Every animation in the site is either a CSS transition or a `.reveal`, so
+ * this single block neutralises all of them. Nothing is allowed to animate
+ * through JS-driven style writes that would escape this rule.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal[data-reveal='pending'] {
+    opacity: 1;
+    transform: none;
+  }
+}

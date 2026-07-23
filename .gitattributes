@@ -1,0 +1,9 @@
+# Normalise line endings to LF in the repository and in the working tree.
+#
+# Prettier is configured with `endOfLine: "lf"`. Without this file Git would
+# check out CRLF on Windows, and `npm run format:check` would fail for the next
+# person to clone — a gate failing on a checkout artefact rather than on code.
+* text=auto eol=lf
+
+# Generated; keep diffs collapsed in review tooling.
+package-lock.json linguist-generated=true
