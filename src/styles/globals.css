@@ -86,6 +86,16 @@
     transition-delay: var(--reveal-delay, 0ms);
   }
 
+  /*
+   * Sticky header surface — 85% of the canvas token, so the blur behind it
+   * still shows through slightly. `bg-canvas/85` cannot express this: Tailwind
+   * can only apply an opacity modifier to a colour it can decompose, and
+   * `canvas` resolves through `var(--color-canvas)`, which it treats as opaque.
+   */
+  .header-surface {
+    background-color: color-mix(in srgb, var(--color-canvas) 85%, transparent);
+  }
+
   /* Skip link — visible only when focused. */
   .skip-link {
     position: absolute;

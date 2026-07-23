@@ -39,8 +39,12 @@ Advertising URLs while telling crawlers not to index them is a contradiction;
 the honest form of "not yet" is to advertise nothing.
 
 Organisation JSON-LD is withheld for the same reason — structured data is
-precisely the mechanism that puts a name into a knowledge graph. Breadcrumb
-JSON-LD _is_ emitted, because it names paths rather than the brand.
+precisely the mechanism that puts a name into a knowledge graph.
+`breadcrumbSchema` exists in [`src/lib/seo.ts`](../src/lib/seo.ts) as a
+ready-to-use export, but it is **not currently wired into any route** — no
+page imports it. Wiring it up is deferred to an approved SEO phase; until
+then, no `BreadcrumbList` structured data is emitted anywhere and no indexing
+behavior is affected by its presence in the codebase.
 
 ## 7.2 Canonicals and hreflang
 
@@ -113,7 +117,7 @@ a token change in `brand/`.
 
 | Schema                 | Status                                                                                                                     |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `BreadcrumbList`       | Emitted now — names paths, not the brand.                                                                                  |
+| `BreadcrumbList`       | Exported (`breadcrumbSchema`) but not wired into any route yet. Deferred to an approved SEO phase — not emitted today.     |
 | `Organization`         | Withheld until identity approval.                                                                                          |
 | `Article` (blog)       | Ready to add; withheld while no posts exist and no author identities are real.                                             |
 | `JobPosting` (careers) | Ready to add; withheld while no approved requisitions exist.                                                               |

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { NavSection } from '@/content/navigation';
 import type { Locale } from '@/content/types';
 import { href, localeLabel, locales, t, ui } from '@/lib/i18n';
@@ -20,6 +20,7 @@ import { Container } from '@/components/ui/primitives';
 export function Header({ locale, nav }: { locale: Locale; nav: NavSection[] }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   // Close the drawer on navigation. Without this the menu stays open over the
   // new page, which reads as a broken link.
@@ -33,8 +34,22 @@ export function Header({ locale, nav }: { locale: Locale; nav: NavSection[] }) {
     };
   }, [open]);
 
+  // Escape closes the drawer and returns focus to the toggle, matching the
+  // keyboard convention for dismissible overlays.
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [open]);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-canvas/85 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-border header-surface backdrop-blur">
       <Container>
         <div className="flex h-16 items-center justify-between gap-4">
           <Wordmark locale={locale} />
@@ -85,6 +100,7 @@ export function Header({ locale, nav }: { locale: Locale; nav: NavSection[] }) {
             <ThemeToggle label={t(ui.toggleTheme, locale)} />
 
             <button
+              ref={menuButtonRef}
               type="button"
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
