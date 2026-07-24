@@ -83,6 +83,14 @@ export const ecosystem: EcosystemEntity[] = [
     nameAr: 'ارمور للعناية وحماية السيارات',
     status: 'operating',
     accentRole: 'text-muted',
+    // The one ecosystem entity with an approved, live public site.
+    external: {
+      href: 'https://armor.sa',
+      label: {
+        ar: 'زيارة موقع أرمور للعناية وحماية السيارات',
+        en: 'Visit the ARMOR Car Care website',
+      },
+    },
     type: { ar: 'علامة تشغيلية', en: 'Operating Brand' },
     statusLabel: { ar: 'تعمل الآن', en: 'Operating' },
     endorsement: { ar: 'تحت مظلة تالامير', en: 'Under the TALAMIR Umbrella' },

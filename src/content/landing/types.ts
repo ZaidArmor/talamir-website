@@ -30,6 +30,12 @@ export interface EcosystemEntity {
   status: EntityStatus;
   /** Which colour role draws this entity's chapter arc. */
   accentRole: 'accent' | 'accent-hover' | 'accent-deep' | 'text-muted';
+  /**
+   * An approved external destination for this entity, if one exists. Absent
+   * means the entity has no live site yet — its card stays informational and
+   * in-page, never a dead `#` link or an invented domain.
+   */
+  external?: { href: string; label: Record<Locale, string> };
   type: Record<Locale, string>;
   /** The parent-brand relationship, stated explicitly on every surface. */
   endorsement: Record<Locale, string>;
@@ -113,6 +119,8 @@ export interface LandingCopy {
     boundary: string;
     mapLabel: string;
     panelLabel: string;
+    /** Appended, sr-only, to any link that opens in a new tab. */
+    externalNewTab: string;
   };
 
   sultan: {
@@ -178,6 +186,8 @@ export interface LandingCopy {
   contact: {
     title: string;
     sub: string;
+    /** Intro before the direct email link, e.g. "Or email us directly at". */
+    emailLabel: string;
     fields: {
       name: string;
       company: string;
@@ -192,10 +202,25 @@ export interface LandingCopy {
       preference: { label: string; options: string[] };
     };
     consent: string;
+    /** Optional, opt-in, kept visually and semantically separate from `consent`. */
+    marketingConsent: string;
+    /** One line explaining how the data is used, before the privacy link. */
+    disclosure: string;
+    /** Label of the link to the privacy notice. */
+    privacyLink: string;
     submit: string;
+    /** Shown while the request is in flight. */
+    sending: string;
+    /**
+     * Success confirmation. Contains the token `{ref}`, replaced with the
+     * server-issued reference. Shown only after the backend confirms storage.
+     */
+    success: string;
     /** Shown when no intake endpoint is configured — the honest default. */
     disabledNote: string;
     incompleteNote: string;
+    /** Shown when the request could not reach the server at all. */
+    networkError: string;
   };
 
   footer: {

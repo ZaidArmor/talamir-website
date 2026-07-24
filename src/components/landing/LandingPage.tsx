@@ -5,6 +5,7 @@ import { href } from '@/lib/i18n';
 import { ContactForm } from './ContactForm';
 import { EcosystemMap } from './EcosystemMap';
 import { FitFinder } from './FitFinder';
+import { ExternalCta } from './ExternalCta';
 import { BuildIcon, ChapterArc, SultanArc } from './Icons';
 import { LandingFooter } from './LandingFooter';
 import { LandingHeader } from './LandingHeader';
@@ -294,9 +295,17 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     </div>
                     <p className="lp-mono lp-teal lp-endorse">{entity.endorsement[locale]}</p>
                     <p className="lp-lede">{entity.description[locale]}</p>
-                    <a href="#contact" className="lp-btn lp-btn-ghost lp-btn-sm">
-                      {entity.cta[locale]}
-                    </a>
+                    {entity.external ? (
+                      <ExternalCta
+                        href={entity.external.href}
+                        label={entity.external.label[locale]}
+                        newTabHint={copy.ecosystem.externalNewTab}
+                      />
+                    ) : (
+                      <a href="#contact" className="lp-btn lp-btn-ghost lp-btn-sm">
+                        {entity.cta[locale]}
+                      </a>
+                    )}
                   </div>
                   <div className="lp-prod-visual" aria-hidden="true">
                     <ChapterArc accentRole={entity.accentRole} />
@@ -455,7 +464,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </span>
               <h2 className="lp-cta-title">{copy.contact.title}</h2>
               <p className="lp-lede">{copy.contact.sub}</p>
-              <ContactForm copy={copy} />
+              <p className="lp-contact-email">
+                {copy.contact.emailLabel}{' '}
+                <a className="lp-teal lp-ltr" href="mailto:sales@talamir.org">
+                  sales@talamir.org
+                </a>
+              </p>
+              <ContactForm copy={copy} locale={locale} />
             </Reveal>
           </section>
         </main>

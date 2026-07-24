@@ -1497,11 +1497,56 @@
   accent-color: var(--color-accent);
 }
 
+/* Honeypot: removed from view and from the accessibility tree, but still in
+   the DOM and fillable by a naive bot. Off-screen rather than display:none,
+   which some bots skip. */
+.lp-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.lp-contact-email {
+  margin-top: 12px;
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}
+
+.lp-contact-email a {
+  text-decoration: underline;
+}
+
+.lp-consent-note {
+  font-size: var(--text-caption);
+  color: var(--color-text-subtle);
+  line-height: var(--leading-normal);
+  margin-top: 2px;
+}
+
+.lp-consent-note a {
+  text-decoration: underline;
+}
+
 .lp-form-note {
   font-family: var(--font-mono);
   font-size: var(--text-caption);
   color: var(--color-text-subtle);
   margin-top: 4px;
+  /* The success confirmation is multi-line (reference + follow-up). */
+  white-space: pre-line;
+}
+
+/* External-link marker: a small arrow after a link that leaves the site. */
+.lp-external-mark {
+  display: inline-block;
+  margin-inline-start: 0.35em;
+  font-size: 0.85em;
+}
+
+[dir='rtl'] .lp-external-mark {
+  transform: scaleX(-1);
 }
 
 .lp-form-note[data-tone='ok'] {

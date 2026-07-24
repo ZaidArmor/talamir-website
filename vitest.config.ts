@@ -17,6 +17,9 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, 'src'),
       '@brand': resolve(__dirname, 'brand'),
+      // `server-only` throws on import outside a server bundle; stub it so the
+      // server modules that carry the marker remain unit-testable.
+      'server-only': resolve(__dirname, 'tests/helpers/server-only.ts'),
     },
   },
   esbuild: {

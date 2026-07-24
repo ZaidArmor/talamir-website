@@ -3,7 +3,7 @@
 **TALAMIR — Official website (W01)**
 **تالامير — الموقع الرسمي**
 
-Version **0.2.0** · Status: **Approved landing page, not yet indexed** · Date: **2026-07-24**
+Version **0.3.0** · Status: **Contact intake wired (fail-closed), not yet indexed** · Date: **2026-07-24**
 
 ---
 
@@ -61,7 +61,7 @@ npm run build
 npm run format:check     # prettier
 npm run lint             # zero errors, zero warnings
 npm run typecheck        # zero errors
-npm run test             # 326 tests
+npm run test             # 407 tests
 npm run brand:check      # no literal design values outside brand/
 npm run content:check    # no unfounded commercial claims in content
 npm run boundary:check   # the workspace is self-contained
@@ -134,7 +134,7 @@ src/components/   ui/ (primitives, interactive) · blocks/ · layout/ · brand/
 src/content/      content registries, navigation tree, fixed-page copy
 src/lib/          tokens, i18n, seo, markdown
 scripts/          the four guards
-tests/            326 tests — contract, contrast, governance, a11y, routes
+tests/            407 tests — contract, contrast, governance, a11y, routes, contact
 docs/             architecture and strategy documents
 GOVERNANCE.md     status classification and owner-decision compliance
 ```
@@ -160,7 +160,7 @@ relationships above are editorial provenance only.
 
 | Area                              | State                                                              |
 | --------------------------------- | ------------------------------------------------------------------ |
-| IA, navigation, routing           | Complete — 24 route entrypoints → 45 static pages, all prerendered |
+| IA, navigation, routing           | Complete — 25 route entrypoints, 47 pages + /api/contact (dynamic) |
 | Component library                 | Complete                                                           |
 | Design tokens / swap mechanism    | Complete and verified                                              |
 | Motion, responsive, RTL           | Complete                                                           |
@@ -168,6 +168,9 @@ relationships above are editorial provenance only.
 | Content model + governance guards | Complete                                                           |
 | **Visual identity**               | **Approved — `brand/brand.talamir.ts`, swapped in one file**       |
 | Landing page (`/ar`, `/en`)       | Complete — approved design, 22 sections, both locales              |
+| Contact intake (`/api/contact`)   | Built, fail-closed — awaits DB + mailbox + secret (db/README.md)   |
+| Ecosystem links                   | ARMOR → armor.sa (new tab); others in-page; no invented URLs       |
+| Privacy notice                    | Draft, noindex — pending legal review                              |
 | Automated a11y / contrast testing | Complete — axe over prerendered HTML + token-level WCAG contrast   |
 | Governance record                 | Complete — see [GOVERNANCE.md](GOVERNANCE.md)                      |
 | Screen-reader testing             | **Not performed** — REQUIRED BEFORE PUBLIC RELEASE, docs/06 §6.10  |

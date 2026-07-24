@@ -95,6 +95,7 @@ export const landingEn: LandingCopy = {
       'Each product keeps its own data, accounts and subscriptions — no shared database, no single login.',
     mapLabel: 'TALAMIR ecosystem entities',
     panelLabel: 'Selected entity detail',
+    externalNewTab: '(opens in a new tab)',
   },
 
   sultan: {
@@ -383,6 +384,7 @@ export const landingEn: LandingCopy = {
   contact: {
     title: "Let's turn your need into a working system.",
     sub: "Tell us about your organization and challenge, and we'll guide you to the right TALAMIR tool.",
+    emailLabel: 'Or email us directly at',
     fields: {
       name: 'Full name',
       company: 'Company name',
@@ -412,10 +414,17 @@ export const landingEn: LandingCopy = {
       preference: { label: 'Preferred contact method', options: ['Call', 'WhatsApp', 'Email'] },
     },
     consent: 'I agree to be contacted about my request.',
+    marketingConsent: 'I would also like to receive TALAMIR updates (optional).',
+    disclosure: 'The information you submit will be used only to respond to your inquiry.',
+    privacyLink: 'Privacy notice',
     submit: 'Send request',
+    sending: 'Sending…',
+    success:
+      'Your request has been received successfully.\nReference: {ref}\nThe TALAMIR team will contact you through your preferred channel.',
     disabledNote:
       'The official intake channel is being set up — the form will not actually send until it is connected.',
     incompleteNote: 'Please complete the fields and agree to be contacted.',
+    networkError: 'Could not reach the server. Check your connection and try again.',
   },
 
   footer: {

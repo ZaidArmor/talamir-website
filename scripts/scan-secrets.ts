@@ -89,6 +89,10 @@ const ALLOW: Array<{ match: RegExp; why: string }> = [
     match: /noreply@|placeholder|\[REDACTED\]/i,
     why: 'explicit placeholder markers',
   },
+  {
+    match: /(sales|info|contact|hello|support|privacy)@talamir\.org/i,
+    why: 'TALAMIR role mailboxes are public company contact addresses, not personal data',
+  },
 ];
 
 const walk = (dir: string): string[] =>

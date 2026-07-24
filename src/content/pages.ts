@@ -82,6 +82,41 @@ export const pageCopy = {
     },
   },
 
+  privacy: {
+    title: { ar: 'إشعار الخصوصية', en: 'Privacy notice' },
+    lede: {
+      ar: 'مسودة — قيد المراجعة القانونية. تصف كيفية تعاملنا مع البيانات التي ترسلها عبر نموذج التواصل. ليست وثيقة قانونية معتمدة بعد.',
+      en: 'Draft — pending legal review. It describes how we handle the information you submit through the contact form. It is not yet an approved legal document.',
+    },
+    pending: {
+      ar: 'تحتاج هذه الصفحة إلى مراجعة واعتماد قانوني قبل أن تُعرض كإشعار خصوصية رسمي.',
+      en: 'This page requires legal review and approval before it can be presented as a formal privacy notice.',
+    },
+    sections: [
+      {
+        heading: { ar: 'ما الذي نجمعه', en: 'What we collect' },
+        body: {
+          ar: 'الحقول التي تُدخلها في نموذج التواصل فقط: الاسم، الشركة، المدينة، وسيلة التواصل، نوع النشاط، المنتج محل الاهتمام، الإطار الزمني، وسيلة التواصل المفضّلة، ووصف التحدي إن أضفته. لا نجمع مستندات هوية أو بيانات دفع، ولا نخزّن عنوان بروتوكول الإنترنت الخاص بك.',
+          en: 'Only the fields you enter in the contact form: name, company, city, contact detail, activity type, product of interest, timeframe, preferred contact method, and your challenge description if you add one. We do not collect identity documents or payment data, and we do not store your IP address.',
+        },
+      },
+      {
+        heading: { ar: 'لماذا نستخدمها', en: 'How we use it' },
+        body: {
+          ar: 'تُستخدم بياناتك للرد على استفسارك والتواصل معك بشأنه عبر الوسيلة التي اخترتها. لا نضيفك إلى أي قائمة تسويقية إلا إذا اخترت ذلك صراحةً عبر خانة منفصلة.',
+          en: 'Your information is used to respond to your inquiry and to contact you about it through the channel you chose. We do not add you to any marketing list unless you explicitly opt in through a separate checkbox.',
+        },
+      },
+      {
+        heading: { ar: 'مدة الاحتفاظ', en: 'Retention' },
+        body: {
+          ar: 'سياسة الاحتفاظ المقترحة: أرشفة بعد اثني عشر شهرًا من آخر تحديث، وحذف بعد أربعة وعشرين شهرًا. هذه السياسة مقترحة وبانتظار اعتماد المالك.',
+          en: 'Proposed retention: archive twelve months after the last update, delete after twenty-four months. This is a proposal, pending owner sign-off.',
+        },
+      },
+    ],
+  },
+
   partners: {
     title: { ar: 'برنامج الشركاء', en: 'Partner Program' },
     lede: {

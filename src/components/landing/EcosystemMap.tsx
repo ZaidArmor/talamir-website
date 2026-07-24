@@ -5,6 +5,7 @@ import type { EcosystemEntity, LandingCopy } from '@/content/landing';
 import type { Locale } from '@/content/types';
 import { anchorFor } from './anchors';
 import { useSelection } from './SelectionContext';
+import { ExternalCta } from './ExternalCta';
 import { Mark } from './Mark';
 import { StatusBadge } from './StatusBadge';
 
@@ -138,9 +139,20 @@ export function EcosystemMap({
           <span className="lp-endorse">{current.endorsement[locale]}</span>
           <StatusBadge entity={current} locale={locale} />
           <p className="lp-p-desc">{current.description[locale]}</p>
-          <a className="lp-btn lp-btn-ghost lp-btn-sm" href={`#${anchorFor(current.id)}`}>
-            {current.cta[locale]}
-          </a>
+          {current.external ? (
+            // The one entity with an approved live site opens it directly.
+            <ExternalCta
+              href={current.external.href}
+              label={current.external.label[locale]}
+              newTabHint={copy.ecosystem.externalNewTab}
+            />
+          ) : (
+            // The rest link in-page to their own section — a real destination,
+            // never a dead anchor or an invented domain.
+            <a className="lp-btn lp-btn-ghost lp-btn-sm" href={`#${anchorFor(current.id)}`}>
+              {current.cta[locale]}
+            </a>
+          )}
         </div>
       </div>
 
