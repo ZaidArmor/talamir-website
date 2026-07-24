@@ -1,8 +1,8 @@
 {
   "name": "talamir-website",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "TALAMIR official website — identity-agnostic structural build (W01)",
+  "description": "TALAMIR official website — approved landing page on the token-driven identity contract",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

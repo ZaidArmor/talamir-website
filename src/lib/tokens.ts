@@ -79,5 +79,21 @@ export function buildTokenStylesheet(): string {
 :root[data-theme='light'] {
     ${colorVars(colors.light)}
 }
+
+/*
+ * A scheme scope, not a page style.
+ *
+ * The approved landing design is a dark composition — the teal only carries at
+ * that value, and the orbit, the ecosystem map and the connector lines are all
+ * drawn for a dark ground. Rendering it in the light scheme would not be a
+ * lighter version of the approved design; it would be a different one.
+ *
+ * So the landing root re-declares the dark colour roles for its subtree. It is
+ * still entirely token-driven: change the identity and this changes with it.
+ * Everything outside the scope continues to honour the visitor's theme.
+ */
+[data-scheme='dark'] {
+    ${colorVars(colors.dark)}
+}
 `.trim();
 }

@@ -8,10 +8,16 @@ import { defaultLocale, locales } from '@/lib/i18n';
  * redirected rather than rewritten, so there is exactly one canonical URL per
  * page and no duplicate-content problem for search engines.
  *
- * The visitor's `Accept-Language` is consulted, but Arabic remains the default
- * for anyone who does not clearly prefer English — this is an Arabic-first
- * company, and the fallback should reflect that rather than defaulting to
- * English out of habit.
+ * The site root is deliberately **not** negotiated. `/` always lands on the
+ * approved default locale, so the brand's entry point is one stable URL that
+ * every visitor, crawler and shared link resolves to identically. Content
+ * negotiation on the root would make the canonical home vary by request header,
+ * which is exactly the ambiguity a public landing page should not have.
+ *
+ * Deeper unprefixed paths still consult `Accept-Language`, because there the
+ * visitor asked for a specific page and their language preference is the only
+ * signal available. Arabic remains the fallback for anyone who does not clearly
+ * prefer English — this is an Arabic-first company.
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -22,7 +28,7 @@ export function middleware(request: NextRequest) {
   if (hasLocale) return NextResponse.next();
 
   const accepts = request.headers.get('accept-language') ?? '';
-  const prefersEnglish = /\ben\b/i.test(accepts) && !/\bar\b/i.test(accepts);
+  const prefersEnglish = pathname !== '/' && /\ben\b/i.test(accepts) && !/\bar\b/i.test(accepts);
   const locale = prefersEnglish ? 'en' : defaultLocale;
 
   const url = request.nextUrl.clone();

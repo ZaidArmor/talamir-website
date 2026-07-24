@@ -27,19 +27,26 @@ export const swapTestBrand: BrandDefinition = {
     en: 'Swap-verification fixture — not a design proposal.',
   },
 
+  // A fixture has no brand line to publish.
+  tagline: null,
+
   colors: {
     light: {
       canvas: '#FDF8F0',
       surface: '#F5EADA',
       surfaceMuted: '#EADCC6',
+      surfaceRaised: '#FFFDF8',
       border: '#D8C4A4',
+      borderSubtle: '#E3D3B8',
       // 4.34:1 / 3.86:1 / 3.40:1 — WCAG 1.4.11 non-text contrast.
       borderStrong: '#8F7047',
       text: '#241C10',
       textMuted: '#6B5636',
+      textSubtle: '#6B5636',
       textOnAccent: '#FDF8F0',
       accent: '#8C3A1E',
       accentHover: '#6E2C14',
+      accentDeep: '#4E1D0C',
       accentSubtle: '#F0DFCC',
       focus: '#8C3A1E',
       success: '#3F6B2A',
@@ -51,14 +58,18 @@ export const swapTestBrand: BrandDefinition = {
       canvas: '#191207',
       surface: '#241A0C',
       surfaceMuted: '#312413',
+      surfaceRaised: '#3A2B17',
       border: '#46341C',
+      borderSubtle: '#3A2B17',
       // 3.88:1 / 3.57:1 / 3.15:1 — WCAG 1.4.11 non-text contrast.
       borderStrong: '#8A6E42',
       text: '#F7EEDD',
       textMuted: '#BCA47C',
+      textSubtle: '#BCA47C',
       textOnAccent: '#191207',
       accent: '#E08A5A',
       accentHover: '#F0A578',
+      accentDeep: '#A85E36',
       accentSubtle: '#2E2112',
       focus: '#E08A5A',
       success: '#8CC06A',

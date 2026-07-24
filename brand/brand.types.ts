@@ -30,14 +30,20 @@ export interface ColorRoles {
   surface: string;
   /** A surface on a surface: inputs, code blocks, table stripes. */
   surfaceMuted: string;
+  /** A surface lifted toward the viewer: card hover, active panel. */
+  surfaceRaised: string;
   /** Hairlines and dividers. */
   border: string;
-  /** Border under focus/hover emphasis. */
+  /** A quieter hairline than `border` — panel seams, node outlines. */
+  borderSubtle: string;
+  /** Border under focus/hover emphasis. Bounds controls, so >= 3:1 non-text. */
   borderStrong: string;
   /** Primary reading text. Must hit >= 4.5:1 on `canvas` and `surface`. */
   text: string;
   /** Secondary text, captions, metadata. >= 4.5:1 for body sizes. */
   textMuted: string;
+  /** Tertiary text: eyebrow tags, hints, footnotes. Still >= 4.5:1. */
+  textSubtle: string;
   /** Text placed on top of `accent`. */
   textOnAccent: string;
   /**
@@ -47,6 +53,8 @@ export interface ColorRoles {
   accent: string;
   /** Hover/active state of accent. */
   accentHover: string;
+  /** The recessive end of the accent family: inactive rails, connector lines. */
+  accentDeep: string;
   /** Low-opacity accent wash for selected rows, badges, focus halos. */
   accentSubtle: string;
   /** Focus ring. Kept separate from accent so it can stay high-contrast. */
@@ -135,6 +143,10 @@ export interface MotionTokens {
 /**
  * How the mark is drawn while no logo exists. Once `status` is `"approved"`,
  * `asset` is supplied and the generated placeholder is never rendered.
+ *
+ * `placeholderShape` stays required after approval: it is what the generated
+ * fallback draws if the asset ever fails to load, so the lockup box never
+ * collapses.
  */
 export interface LogoTokens {
   /** Path under /public. `null` while placeholder — nothing to serve yet. */
@@ -151,14 +163,19 @@ export interface BrandDefinition {
   /** Stable id used by `BRAND_ID` to select this definition. */
   id: string;
   /**
-   * The trading name is *not decided*. Every surface reads this token, so the
-   * validated name lands in one place. See the portfolio register's name-status
-   * note in `talamir-product-portfolio`.
+   * The trading name. Every surface reads this token, so a name change lands
+   * in one place — that property is what let the site run for a whole phase
+   * without one.
    */
   workingName: { ar: string; en: string };
   status: BrandStatus;
   /** Free text shown in the placeholder ribbon while status !== 'approved'. */
   notice: { ar: string; en: string } | null;
+  /**
+   * The brand line. `null` until an identity has one approved for public use —
+   * an unapproved tagline must not reach a rendered page.
+   */
+  tagline: { ar: string; en: string } | null;
   colors: ColorTokens;
   typography: TypographyTokens;
   shape: ShapeTokens;

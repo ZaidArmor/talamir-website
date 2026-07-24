@@ -1,8 +1,9 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { basename, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { placeholderBrand } from '../brand/brand.placeholder';
 import { swapTestBrand } from '../brand/brand.swap-test';
+import { talamirBrand } from '../brand/brand.talamir';
 import { products } from '../src/content/products';
 import { solutions, industries } from '../src/content/taxonomies';
 import { posts, press, roles } from '../src/content/editorial';
@@ -52,12 +53,38 @@ describe('OD-19 — name validation is not legal clearance', () => {
   });
 });
 
-describe('OD-16 — approved tagline is blocked from public use', () => {
-  it('does not publish the approved tagline', () => {
-    // Approved for internal design drafts only. A public website is not that.
-    const tagline = /من الفكرة إلى نظام يعمل|From idea to a system that works/i;
+describe('OD-16 — the tagline is approved, and sourced from one place', () => {
+  /*
+   * Superseded, not deleted. OD-16 restricted the tagline to internal design
+   * drafts; the owner has since approved it for the public landing page. The
+   * control is re-pointed rather than removed: the tagline is now permitted,
+   * but only as a brand token, and only on an identity that is itself approved.
+   *
+   * The original decision and its supersession are recorded in GOVERNANCE.md.
+   */
+  const TAGLINE = /من الفكرة إلى نظام يعمل|From idea to a system that works/i;
+
+  it('carries the approved wording on the approved identity', () => {
+    expect(talamirBrand.tagline).not.toBeNull();
+    expect(talamirBrand.tagline?.ar).toMatch(TAGLINE);
+    expect(talamirBrand.tagline?.en).toMatch(TAGLINE);
+  });
+
+  it('is withheld from every unapproved identity', () => {
+    for (const [name, brand] of [
+      ['placeholder', placeholderBrand],
+      ['swap-test', swapTestBrand],
+    ] as const) {
+      expect(brand.tagline, `${name} must publish no tagline`).toBeNull();
+    }
+  });
+
+  it('is written once — no file outside brand/ hardcodes it', () => {
+    // The substance of the original control survives here: if the wording ever
+    // changes, there is exactly one place to change it.
     for (const [name, body] of readAll()) {
-      expect(body, `${name} must not carry the tagline publicly`).not.toMatch(tagline);
+      if (name.startsWith('/brand/')) continue;
+      expect(body, `${name} hardcodes the tagline`).not.toMatch(TAGLINE);
     }
   });
 });
@@ -98,39 +125,76 @@ describe('OD-22 — no market or research-backed positioning claims', () => {
   });
 });
 
-describe('OD-23 — visual identity deferred', () => {
-  it('registers no final logo asset in any brand definition', () => {
+describe('OD-23 — visual identity approved, still gated per identity', () => {
+  /*
+   * Superseded, not deleted. OD-23 deferred the visual identity, so the
+   * repository shipped no mark and no typeface. The owner has since approved
+   * the identity, and the landing page needs both.
+   *
+   * What the control actually protected still holds, one level down: an
+   * identity that has NOT been approved may still register no asset, so the
+   * placeholder can never quietly begin presenting itself as a finished brand.
+   */
+  it('registers a logo asset only on an approved identity', () => {
     // Asserted on the definitions themselves, not by scanning text — the type
     // declaration legitimately contains `asset: string | null`.
     for (const [name, brand] of [
+      ['talamir', talamirBrand],
       ['placeholder', placeholderBrand],
       ['swap-test', swapTestBrand],
     ] as const) {
-      expect(brand.logo.asset, `${name} must register no logo asset`).toBeNull();
+      if (brand.status === 'approved') {
+        expect(brand.logo.asset, `${name} must register its mark`).not.toBeNull();
+      } else {
+        expect(brand.logo.asset, `${name} must register no logo asset`).toBeNull();
+      }
     }
   });
 
-  it('ships no logo image file', () => {
-    const imageLike = /\.(svg|png|jpe?g|webp|avif|ico)$/i;
-    let files: string[] = [];
-    try {
-      files = walk(join(ROOT, 'public'));
-    } catch {
-      files = []; // no public/ directory — nothing can be shipped
-    }
-    expect(files.filter((f) => imageLike.test(f))).toHaveLength(0);
+  it('ships the registered mark as a real file', () => {
+    const asset = talamirBrand.logo.asset;
+    expect(asset).not.toBeNull();
+    expect(
+      existsSync(join(ROOT, 'public', asset!.replace(/^\//, ''))),
+      `${asset} is registered but not present under public/`,
+    ).toBe(true);
   });
 
-  it('ships no webfont or licensed typeface file', () => {
+  it('ships only openly licensed typefaces, self-hosted', () => {
+    /*
+     * The original control banned webfonts outright while no identity existed
+     * — the risk being a licensed face committed to a repository with no
+     * licence for it. That risk is addressed rather than dropped: the three
+     * approved families are all SIL Open Font License 1.1, which permits
+     * redistribution and web embedding, and each is named here so an
+     * unlicensed face cannot arrive without this test changing.
+     */
+    const LICENSED = ['readex-pro', 'sora', 'ibm-plex-mono'];
     const fontLike = /\.(woff2?|ttf|otf|eot)$/i;
-    const publicDir = join(ROOT, 'public');
+
+    // The shared `walk` filters to source extensions; fonts need their own.
+    const walkAll = (dir: string): string[] =>
+      readdirSync(dir).flatMap((entry) => {
+        const full = join(dir, entry);
+        return statSync(full).isDirectory() ? walkAll(full) : [full];
+      });
+
     let files: string[] = [];
     try {
-      files = walk(publicDir);
+      files = walkAll(join(ROOT, 'public'));
     } catch {
-      files = []; // no public/ directory at all — also acceptable
+      files = [];
     }
-    expect(files.filter((f) => fontLike.test(f))).toHaveLength(0);
+
+    const fonts = files.filter((f) => fontLike.test(f)).map((f) => basename(f));
+    expect(fonts.length, 'the approved identity self-hosts its faces').toBeGreaterThan(0);
+
+    for (const font of fonts) {
+      expect(
+        LICENSED.some((family) => font.startsWith(family)),
+        `${font} is not one of the declared open-licensed families`,
+      ).toBe(true);
+    }
   });
 });
 
@@ -170,9 +234,36 @@ describe('workspace boundary', () => {
     }
   });
 
-  it('makes no reference to ARMOR', () => {
+  it('references no foreign workspace, repository or package', () => {
+    /*
+     * Narrowed, deliberately.
+     *
+     * This started as a blanket ban on the string "ARMOR", written when the
+     * workspace had just been split out of that repository and the only
+     * appearances of the word were leftovers pointing back at it.
+     *
+     * The approved landing design names the car-care brand as one of the four
+     * ecosystem entities, so the word is now legitimate *content*. What must
+     * stay impossible is a reference to the other **workspace** — a path, a
+     * repository, an import, a dependency. That is what this now checks, and
+     * it is the thing the boundary actually needed protecting from.
+     */
+    const foreignWorkspace =
+      /[A-Za-z]:[\\/]Armor|["'`][^"'`]*\.\.[\\/]{1,2}[Aa]rmor|\bgithub\.com[/:][^\s"'`]*[/]armor\b|["']armor[-/][^"']*["']\s*:/i;
+
     for (const [name, body] of readAll()) {
-      expect(body, `${name} references ARMOR`).not.toMatch(/\bARMOR\b/);
+      expect(body, `${name} references a foreign workspace`).not.toMatch(foreignWorkspace);
+    }
+  });
+
+  it('declares no dependency on a foreign workspace', () => {
+    const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+    for (const [name, version] of Object.entries(deps)) {
+      expect(version, `${name} resolves outside the registry`).not.toMatch(/^(file:|link:)/);
     }
   });
 });

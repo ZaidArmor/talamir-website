@@ -3,36 +3,44 @@
 **TALAMIR — Official website (W01)**
 **تالامير — الموقع الرسمي**
 
-Version **0.1.0** · Status: **Structural build on a placeholder identity** · Date: **2026-07-23**
+Version **0.2.0** · Status: **Approved landing page, not yet indexed** · Date: **2026-07-24**
 
 ---
 
 ## 1. What this repository is
 
-The official website, built **structure-first**. Information architecture,
-navigation, routing, component library, motion, responsive rules, SEO
-architecture and content model are complete and working. The **visual identity
-is not** — no logo, no palette, no typeface, and no validated trading name
-exists yet.
+The official website. It was built **structure-first**: information
+architecture, navigation, routing, component library, motion, responsive rules,
+SEO architecture and content model came first, on a deliberately neutral
+placeholder identity, because none of the visual identity had been approved.
 
-Rather than wait, the identity is expressed as a **swappable token contract**.
-Everything visual resolves from one file. Introducing the real identity later is
-a configuration change, not a rebuild.
+That identity has since been **approved**, and the swap the architecture was
+built for has happened. It touched one file — `brand/brand.talamir.ts` — plus
+the landing composition that reads from it. No component, page or layout
+contains a colour, font, radius or timing of its own; `npm run brand:check`
+fails the build if one appears.
 
-> **The name is under validation.** Every surface renders it from a token,
-> currently `[الاسم قيد التحقق]` / `[WORKING NAME]`.
+The placeholder identity stays registered rather than being deleted: it is the
+fixture the swap tests compare against, and the proof that the layer works is
+only meaningful while both ends of the swap still exist.
+
+> **Approved brand:** تالامير / TALAMIR.
+> The approved tagline is carried by `brand.tagline` and is deliberately not
+> quoted here — one source for the wording, including in documentation, so the
+> two cannot drift apart. `npm run test` fails if any file outside `brand/`
+> reproduces it.
 
 ## 2. What this repository is NOT
 
 By explicit constraint, this site does **not**:
 
-- present any final logo, approved palette, or settled trading name;
 - claim any product is ready, available, complete, or for sale;
 - state pricing, service levels, compliance certifications, or uptime;
 - reference customers, publish testimonials, or display a logo wall;
 - assert a legal entity, registration, or copyright holder;
 - get indexed by search engines — `noindex` and `robots.txt: Disallow: /` are in
-  force until the identity is approved.
+  force until indexing is explicitly enabled, which is now a **separate** owner
+  decision from identity approval (see §5 and GOVERNANCE.md §7.3).
 
 Those constraints inherit from `talamir-product-portfolio`, whose register
 states that no approved source exists for any commercial, legal, or launch
@@ -53,7 +61,7 @@ npm run build
 npm run format:check     # prettier
 npm run lint             # zero errors, zero warnings
 npm run typecheck        # zero errors
-npm run test             # 246 tests
+npm run test             # 326 tests
 npm run brand:check      # no literal design values outside brand/
 npm run content:check    # no unfounded commercial claims in content
 npm run boundary:check   # the workspace is self-contained
@@ -126,7 +134,7 @@ src/components/   ui/ (primitives, interactive) · blocks/ · layout/ · brand/
 src/content/      content registries, navigation tree, fixed-page copy
 src/lib/          tokens, i18n, seo, markdown
 scripts/          the four guards
-tests/            246 tests — contract, contrast, governance, a11y, routes
+tests/            326 tests — contract, contrast, governance, a11y, routes
 docs/             architecture and strategy documents
 GOVERNANCE.md     status classification and owner-decision compliance
 ```
@@ -139,9 +147,10 @@ GOVERNANCE.md     status classification and owner-decision compliance
   _"Pending owner input"_ rather than being filled in.
 - **The internal brand-exploration document set** (`docs/brand-exploration/`,
   maintained in a separate workspace outside this repository) — marked
-  `INTERNAL CONCEPT — NOT APPROVED`. The placeholder palette here is deliberately
-  **none** of its three candidate directions, so this build cannot be mistaken
-  for a decision.
+  `INTERNAL CONCEPT — NOT APPROVED`. It preceded the approved identity and is
+  superseded by it; the placeholder palette that shipped during exploration was
+  deliberately none of its candidate directions, so no build before approval
+  could be mistaken for a decision.
 
 This repository holds **no absolute filesystem path** to any other workspace, and
 no build step, script, import, or configuration value resolves outside it. The
@@ -151,18 +160,20 @@ relationships above are editorial provenance only.
 
 | Area                              | State                                                              |
 | --------------------------------- | ------------------------------------------------------------------ |
-| IA, navigation, routing           | Complete — 23 route entrypoints → 41 static pages, all prerendered |
+| IA, navigation, routing           | Complete — 24 route entrypoints → 45 static pages, all prerendered |
 | Component library                 | Complete                                                           |
 | Design tokens / swap mechanism    | Complete and verified                                              |
 | Motion, responsive, RTL           | Complete                                                           |
-| SEO architecture                  | Complete, gated `noindex`                                          |
+| SEO architecture                  | Complete — production domain, OG image; gated `noindex`            |
 | Content model + governance guards | Complete                                                           |
-| **Visual identity**               | **Placeholder — awaiting design and name validation**              |
-| **Page copy**                     | **Pending — no approved source for commercial content**            |
+| **Visual identity**               | **Approved — `brand/brand.talamir.ts`, swapped in one file**       |
+| Landing page (`/ar`, `/en`)       | Complete — approved design, 22 sections, both locales              |
 | Automated a11y / contrast testing | Complete — axe over prerendered HTML + token-level WCAG contrast   |
 | Governance record                 | Complete — see [GOVERNANCE.md](GOVERNANCE.md)                      |
 | Screen-reader testing             | **Not performed** — REQUIRED BEFORE PUBLIC RELEASE, docs/06 §6.10  |
 | Third-party accessibility audit   | **Not performed** — docs/06 §6.10                                  |
+| Inner-site page copy              | **Pending — no approved source for commercial content**            |
+| **Public indexing**               | **OFF — separate owner decision, see GOVERNANCE.md §7.3**          |
 | **Public launch**                 | **Not authorized**                                                 |
 
 Governance classification of every material decision, and compliance with owner

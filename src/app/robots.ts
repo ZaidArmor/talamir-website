@@ -1,20 +1,19 @@
 import type { MetadataRoute } from 'next';
-import { isPlaceholderIdentity } from '@brand/index';
 import { siteUrl } from '@/lib/seo';
+import { publicIndexingEnabled } from '@/lib/visibility';
 
 /**
  * robots.txt.
  *
- * The identity gate again, at the crawl layer this time. A site whose trading
- * name has not been validated must not be indexed under that name — search
- * results and knowledge panels are slow to correct, and a premature listing
- * would prejudice the name-validation decision itself.
+ * The visibility gate again, at the crawl layer this time. The identity is
+ * approved, but the deployed design has not been verified in production, and a
+ * premature listing is slow and expensive to correct.
  *
- * This flips automatically when the brand definition reaches `approved`. No
- * separate deployment checklist item to forget.
+ * This flips only when NEXT_PUBLIC_PUBLIC_INDEXING is explicitly set — see
+ * src/lib/visibility.ts. Nothing about a brand edit can turn it on by itself.
  */
 export default function robots(): MetadataRoute.Robots {
-  if (isPlaceholderIdentity) {
+  if (!publicIndexingEnabled) {
     return { rules: [{ userAgent: '*', disallow: '/' }] };
   }
 

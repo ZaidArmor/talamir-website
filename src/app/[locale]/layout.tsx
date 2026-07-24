@@ -1,25 +1,27 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import '@/styles/globals.css';
+import '@/styles/landing.css';
 
 import { brand } from '@brand/index';
-import { primaryNav } from '@/content/navigation';
+import { landingCopy } from '@/content/landing';
 import type { Locale } from '@/content/types';
-import { dirOf, isLocale, locales, t, ui } from '@/lib/i18n';
+import { dirOf, isLocale, locales } from '@/lib/i18n';
 import { buildTokenStylesheet } from '@/lib/tokens';
-import { organizationSchema, pageMetadata } from '@/lib/seo';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { PlaceholderRibbon } from '@/components/blocks';
+import { organizationSchema, pageMetadata, siteUrl } from '@/lib/seo';
 import { themeScript } from '@/components/ui/ThemeToggle';
 
 /**
  * Root layout.
  *
- * This is the only place that knows about `<html>`, direction, and the token
- * stylesheet. `dir` is derived from the locale, so adding a third language is a
- * data change — no layout in the site hardcodes left or right (all spacing uses
- * CSS logical properties: `ps-`, `me-`, `start-`, `end-`).
+ * The only place that knows about `<html>`, direction and the token stylesheet.
+ * `dir` is derived from the locale, so adding a third language is a data change
+ * — no layout hardcodes left or right (all spacing uses CSS logical properties:
+ * `ps-`, `me-`, `start-`, `end-`).
+ *
+ * Deliberately thin. The header, footer and skip link live in the `(site)`
+ * layout, because the approved landing page brings its own chrome and would
+ * otherwise render a second header and a second footer.
  */
 
 export const dynamicParams = false;
@@ -36,20 +38,21 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
+  const copy = landingCopy(locale);
+
   return {
     ...pageMetadata({
       locale,
       path: '/',
-      title: t(brand.workingName, locale),
-      description: t(
-        {
-          ar: 'الموقع الرسمي — قيد الإنشاء بهوية مؤقتة قابلة للاستبدال.',
-          en: 'Official website — under construction with a swappable placeholder identity.',
-        },
-        locale,
-      ),
+      title: copy.meta.title,
+      description: copy.meta.description,
     }),
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://example.invalid'),
+    // The template applies to pages *under* the root; the landing page sets its
+    // own title outright, so it is not suffixed with the brand name twice.
+    title: { default: copy.meta.title, template: `%s — ${brand.workingName[locale]}` },
+    applicationName: brand.workingName[locale],
+    metadataBase: new URL(siteUrl),
+    icons: { icon: '/icon.svg', apple: '/apple-icon.png' },
   };
 }
 
@@ -77,20 +80,7 @@ export default async function LocaleLayout({
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schema }} />
         )}
       </head>
-      <body className="flex min-h-dvh flex-col">
-        <a href="#main" className="skip-link">
-          {t(ui.skipToContent, locale)}
-        </a>
-
-        <PlaceholderRibbon locale={locale} />
-        <Header locale={locale} nav={primaryNav()} />
-
-        <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
-          {children}
-        </main>
-
-        <Footer locale={locale} />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

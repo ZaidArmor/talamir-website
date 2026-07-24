@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { placeholderBrand } from '../brand/brand.placeholder';
 import { swapTestBrand } from '../brand/brand.swap-test';
+import { talamirBrand } from '../brand/brand.talamir';
 import type { BrandDefinition, ColorRoles } from '../brand/brand.types';
 import { ratio } from './helpers/contrast';
 
@@ -30,9 +31,13 @@ const textPairs: Array<[keyof ColorRoles, keyof ColorRoles]> = [
   ['text', 'canvas'],
   ['text', 'surface'],
   ['text', 'surfaceMuted'],
+  ['text', 'surfaceRaised'],
   ['textMuted', 'canvas'],
   ['textMuted', 'surface'],
   ['textMuted', 'surfaceMuted'],
+  ['textSubtle', 'canvas'],
+  ['textSubtle', 'surface'],
+  ['textSubtle', 'surfaceMuted'],
   ['textOnAccent', 'accent'],
   // Status colours are used as text on the page background.
   ['success', 'canvas'],
@@ -57,6 +62,8 @@ const uiPairs: Array<[keyof ColorRoles, keyof ColorRoles]> = [
 ];
 
 const brands: Array<[string, BrandDefinition]> = [
+  // The live identity comes first: it is the one actually being served.
+  ['talamir', talamirBrand],
   ['placeholder', placeholderBrand],
   ['swap-test', swapTestBrand],
 ];

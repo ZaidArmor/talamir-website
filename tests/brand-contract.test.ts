@@ -1,6 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { describe, expect, it, vi } from 'vitest';
 import { placeholderBrand } from '../brand/brand.placeholder';
 import { swapTestBrand } from '../brand/brand.swap-test';
+import { talamirBrand } from '../brand/brand.talamir';
 import type { BrandDefinition, ColorRoles } from '../brand/brand.types';
 
 /**
@@ -16,13 +19,17 @@ const REQUIRED_ROLES: Array<keyof ColorRoles> = [
   'canvas',
   'surface',
   'surfaceMuted',
+  'surfaceRaised',
   'border',
+  'borderSubtle',
   'borderStrong',
   'text',
   'textMuted',
+  'textSubtle',
   'textOnAccent',
   'accent',
   'accentHover',
+  'accentDeep',
   'accentSubtle',
   'focus',
   'success',
@@ -32,6 +39,8 @@ const REQUIRED_ROLES: Array<keyof ColorRoles> = [
 ];
 
 const brands: Array<[string, BrandDefinition]> = [
+  // The live identity comes first: it is the one actually being served.
+  ['talamir', talamirBrand],
   ['placeholder', placeholderBrand],
   ['swap-test', swapTestBrand],
 ];
@@ -87,10 +96,20 @@ describe.each(brands)('brand contract — %s', (_name, brand) => {
     expect(brand.colors.dark).toHaveProperty('focus');
   });
 
-  it('renders the trading name from a token, never a literal', () => {
-    // The name is under validation; the brackets are the marker.
-    expect(brand.workingName.ar).toMatch(/^\[.*\]$/);
-    expect(brand.workingName.en).toMatch(/^\[.*\]$/);
+  it('renders the trading name from a token, in both languages', () => {
+    // An unvalidated name is bracketed; an approved one is not. Either way it
+    // is a token, which is the property that let the site run without a name
+    // for a whole phase and adopt one without a component change.
+    expect(brand.workingName.ar.length).toBeGreaterThan(0);
+    expect(brand.workingName.en.length).toBeGreaterThan(0);
+
+    if (brand.status !== 'approved') {
+      expect(brand.workingName.ar, 'unvalidated names stay bracketed').toMatch(/^\[.*\]$/);
+      expect(brand.workingName.en, 'unvalidated names stay bracketed').toMatch(/^\[.*\]$/);
+    } else {
+      expect(brand.workingName.ar).not.toMatch(/^\[.*\]$/);
+      expect(brand.workingName.en).not.toMatch(/^\[.*\]$/);
+    }
   });
 
   it('declares no final logo asset while unapproved', () => {
@@ -101,17 +120,46 @@ describe.each(brands)('brand contract — %s', (_name, brand) => {
 });
 
 describe('production-visibility gate', () => {
-  it('NO registered brand is approved — the site cannot be indexed', () => {
-    // If this ever fails, indexing, JSON-LD and the sitemap all switch on at
-    // once. That must be a deliberate owner act, never an accident.
-    for (const [name, brand] of brands) {
-      expect(brand.status, `${name} must not be 'approved'`).not.toBe('approved');
-    }
+  /*
+   * This gate used to be `no brand is approved`. Approving the identity would
+   * then have switched on indexing, JSON-LD and the sitemap all at once.
+   *
+   * The identity is now approved and that coupling has been cut: visibility is
+   * its own explicit, fail-closed environment switch. See src/lib/visibility.ts.
+   * These assertions guard the new arrangement.
+   */
+  it('never lets the brand definition alone decide indexing', async () => {
+    const source = readFileSync(join(process.cwd(), 'src', 'lib', 'visibility.ts'), 'utf8');
+    expect(source, 'indexing must require an explicit opt-in value').toContain("=== 'enabled'");
   });
 
-  it('every unapproved brand carries a visible placeholder notice', () => {
+  it('keeps indexing off unless the environment opts in', async () => {
+    // Read with the flag unset, which is how every build runs today.
+    delete process.env.NEXT_PUBLIC_PUBLIC_INDEXING;
+    vi.resetModules();
+    const { publicIndexingEnabled } = await import('../src/lib/visibility');
+    expect(publicIndexingEnabled, 'default must be hidden').toBe(false);
+  });
+
+  it('holds an unapproved identity hidden even if the flag is set', async () => {
+    process.env.NEXT_PUBLIC_PUBLIC_INDEXING = 'enabled';
+    process.env.NEXT_PUBLIC_BRAND_ID = 'placeholder';
+    vi.resetModules();
+    const { publicIndexingEnabled } = await import('../src/lib/visibility');
+    expect(publicIndexingEnabled, 'identity approval is a floor, not a bypass').toBe(false);
+
+    delete process.env.NEXT_PUBLIC_PUBLIC_INDEXING;
+    delete process.env.NEXT_PUBLIC_BRAND_ID;
+    vi.resetModules();
+  });
+
+  it('carries a visible notice on every identity that is not approved', () => {
     for (const [name, brand] of brands) {
-      expect(brand.notice, `${name} notice`).not.toBeNull();
+      if (brand.status === 'approved') {
+        expect(brand.notice, `${name} has nothing temporary left to disclose`).toBeNull();
+      } else {
+        expect(brand.notice, `${name} notice`).not.toBeNull();
+      }
     }
   });
 });

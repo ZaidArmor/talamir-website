@@ -208,3 +208,58 @@ does not overstate its own basis:
 
 If either point is resolved differently by the owner, this document — not the
 owner record — is what changes.
+
+## 7. Supersessions — approved public landing page
+
+The owner has approved the TALAMIR identity and the public landing page. Three
+controls recorded above are therefore **superseded, not deleted**. The original
+decisions and the reasoning that produced them stand as a record; what changed
+is what the repository now enforces.
+
+Nothing in this section removes a historical governance record. Each entry
+states what the control was, what replaced it, and where the replacement is
+enforced.
+
+### 7.1 OD-16 — tagline
+
+|                 |                                                                                                                                                                                           |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Was**         | The approved tagline was restricted to internal design drafts. No rendered page could carry it.                                                                                           |
+| **Now**         | The tagline is approved for the public landing page.                                                                                                                                      |
+| **Retained**    | It may appear **only** as a brand token, and **only** on an identity whose `status` is `approved`. No file outside `brand/` may hardcode it, so the wording still has exactly one source. |
+| **Enforced by** | `tests/governance.test.ts` — _OD-16 — the tagline is approved, and sourced from one place_.                                                                                               |
+
+### 7.2 OD-23 — visual identity
+
+|                 |                                                                                                                                                                                                                                                                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Was**         | The visual identity was deferred; the repository shipped no mark, no logo file and no typeface.                                                                                                                                                                                                                                    |
+| **Now**         | The identity is approved. The mark ships at `public/brand/`, and three typefaces are self-hosted under `public/fonts/`.                                                                                                                                                                                                            |
+| **Retained**    | An identity that is **not** approved still registers no logo asset, so the placeholder cannot begin presenting itself as finished. Typefaces are restricted to a named list of openly licensed families (SIL Open Font License 1.1: Readex Pro, Sora, IBM Plex Mono) — an unlicensed face cannot arrive without the test changing. |
+| **Enforced by** | `tests/governance.test.ts` — _OD-23 — visual identity approved, still gated per identity_.                                                                                                                                                                                                                                         |
+
+### 7.3 Production visibility
+
+|                 |                                                                                                                                                                                                                                     |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Was**         | Indexing, `Organization` JSON-LD and the XML sitemap were all gated on `brand.status === 'approved'`. Approving the identity would have switched all three on at once.                                                              |
+| **Now**         | Approving the identity switched **nothing** on. Visibility is a separate, explicit, fail-closed environment switch: `NEXT_PUBLIC_PUBLIC_INDEXING=enabled`. Any other value — unset, empty, `false`, a typo — keeps the site hidden. |
+| **Retained**    | Identity approval remains a **floor**: an unapproved identity stays hidden regardless of the flag.                                                                                                                                  |
+| **Enforced by** | `src/lib/visibility.ts`; `tests/brand-contract.test.ts` — _production-visibility gate_; `tests/visibility-and-routes.test.ts`, which asserts the rule against real build output.                                                    |
+
+**Current state: public indexing is OFF.** `robots.txt` disallows the whole
+site, the sitemap advertises no URLs, every page carries
+`noindex, nofollow, nocache`, and no structured data is emitted. Turning it on
+is a deliberate, separate owner act.
+
+### 7.4 Workspace-boundary check
+
+The boundary test previously banned the string `ARMOR` anywhere in source. That
+was written when the workspace had just been separated and every occurrence was
+a leftover pointing back at the other repository.
+
+The approved design names the car-care brand as one of four ecosystem entities,
+so the word is now legitimate **content**. The check was narrowed to what it was
+actually protecting: no filesystem path, repository URL, relative import or
+package dependency may resolve to a foreign workspace. `npm run boundary:check`
+is unchanged and still enforces the same separation at the file level.

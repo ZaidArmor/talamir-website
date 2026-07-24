@@ -3,7 +3,7 @@ import { getAllRoutableContent } from '@/content';
 import { footerNav } from '@/content/navigation';
 import { locales } from '@/lib/i18n';
 import { siteUrl } from '@/lib/seo';
-import { isPlaceholderIdentity } from '@brand/index';
+import { publicIndexingEnabled } from '@/lib/visibility';
 
 /**
  * XML sitemap.
@@ -13,13 +13,13 @@ import { isPlaceholderIdentity } from '@brand/index';
  * so search engines see the Arabic and English versions as one page in two
  * languages rather than duplicates.
  *
- * While the identity is unapproved the sitemap is empty, matching the
+ * While public indexing is disabled the sitemap is empty, matching the
  * site-wide `noindex` in `lib/seo.ts`. Submitting URLs for indexing while
  * telling crawlers not to index them is a contradiction, and the honest form of
  * "do not index this yet" is to advertise nothing.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  if (isPlaceholderIdentity) return [];
+  if (!publicIndexingEnabled) return [];
 
   // Static section landings, from the navigation tree.
   const staticPaths = new Set<string>(['/']);

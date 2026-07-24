@@ -94,6 +94,10 @@ const EXCEPTIONS: Array<{ file: string; why: string }> = [
     file: join(SRC, 'styles', 'globals.css'),
     why: 'the reduced-motion accessibility floor requires the literal 0.01ms override, and the base layer declares the fluid type clamps',
   },
+  {
+    file: join(SRC, 'styles', 'landing.css'),
+    why: 'the approved landing composition: @font-face declarations for the self-hosted faces, container and node geometry, and the long decorative orbit durations no interaction token covers — every colour, radius and interaction timing in it still resolves through a brand token',
+  },
 ];
 
 const isException = (file: string): boolean => EXCEPTIONS.some((e) => e.file === file);

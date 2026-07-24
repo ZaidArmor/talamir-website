@@ -25,12 +25,17 @@ export const placeholderBrand: BrandDefinition = {
     en: 'Placeholder identity — mark, palette and name are unapproved and swappable.',
   },
 
+  // No tagline is approved for public use under a placeholder identity.
+  tagline: null,
+
   colors: {
     light: {
       canvas: '#FFFFFF',
       surface: '#F7F7F8',
       surfaceMuted: '#EFEFF1',
+      surfaceRaised: '#FFFFFF',
       border: '#E1E1E5',
+      borderSubtle: '#EAEAEE',
       // 3.61:1 on canvas, 3.37:1 on surface, 3.14:1 on surfaceMuted.
       // `borderStrong` bounds interactive controls (secondary buttons), so it
       // must clear WCAG 1.4.11 non-text contrast at 3:1. Enforced by
@@ -38,9 +43,11 @@ export const placeholderBrand: BrandDefinition = {
       borderStrong: '#86868F',
       text: '#17171A',
       textMuted: '#5C5C66',
+      textSubtle: '#5C5C66',
       textOnAccent: '#FFFFFF',
       accent: '#4A5B7A',
       accentHover: '#3A4A66',
+      accentDeep: '#2B3850',
       accentSubtle: '#EDF0F5',
       focus: '#2B5FD9',
       success: '#1F7A4D',
@@ -52,14 +59,18 @@ export const placeholderBrand: BrandDefinition = {
       canvas: '#0F1012',
       surface: '#17181B',
       surfaceMuted: '#1F2024',
+      surfaceRaised: '#232529',
       border: '#2A2C31',
+      borderSubtle: '#232529',
       // 3.57:1 / 3.33:1 / 3.05:1 — see the light-scheme note above.
       borderStrong: '#666B77',
       text: '#F2F2F4',
       textMuted: '#A0A2AA',
+      textSubtle: '#A0A2AA',
       textOnAccent: '#0F1012',
       accent: '#93A6C7',
       accentHover: '#AEBEDA',
+      accentDeep: '#6E80A0',
       accentSubtle: '#1B2028',
       focus: '#7FA5F5',
       success: '#5CC08C',

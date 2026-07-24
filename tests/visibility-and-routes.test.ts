@@ -126,6 +126,9 @@ describe('route integrity', () => {
         if (target.startsWith('/_next/')) continue;
         // Generated SEO files are not prerendered as .html.
         if (target === '/robots.txt' || target === '/sitemap.xml') continue;
+        // Static assets — icons, the mark, fonts. A path with a file extension
+        // is a resource reference, not a navigation target.
+        if (/.[a-z0-9]+$/i.test(target)) continue;
 
         if (!available.has(target)) broken.push(`${route} → ${target}`);
       }
