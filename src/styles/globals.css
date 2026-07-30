@@ -19,6 +19,27 @@
     font-family: var(--font-latin);
   }
 
+  /*
+   * Horizontal-overflow backstop.
+   *
+   * A single absolutely-positioned element with a large negative offset can
+   * widen the whole document, and in RTL that overflow is scrollable — which is
+   * how the honeypot in `.lp-hp` once gave /ar a 10389px scrollWidth on a 390px
+   * screen. That specific cause is fixed at source in landing.css; this is the
+   * net underneath it, so no future off-screen element can make a phone pan
+   * sideways instead of scrolling.
+   *
+   * `clip`, deliberately, not `hidden`: `overflow-x: hidden` on the root turns
+   * it into a scroll container, which breaks `position: sticky` descendants and
+   * anchor scrolling. `clip` clips without establishing one, so the root stays
+   * the scrolling element and `#hero`-style anchor navigation keeps working.
+   */
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   body {
     background-color: var(--color-canvas);
     color: var(--color-text);

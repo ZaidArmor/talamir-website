@@ -210,12 +210,17 @@
 /* ── preloader ─────────────────────────────────────────────────────────── */
 
 /*
- * CSS-only, on purpose.
+ * CSS-first, on purpose.
  *
  * The approved design removes the preloader with JavaScript. Here it retires
  * itself on a keyframe instead, so a visitor whose JavaScript fails, is
  * blocked, or simply has not hydrated yet is never left staring at a covered
- * page. There is no state, so there is nothing to mismatch on hydration.
+ * page. The keyframe is the primary mechanism and needs no hydration.
+ *
+ * `PreloaderRelease` is the belt to this braces: it stamps `data-state="done"`
+ * at 1500ms at the latest, and again on `pageshow` so a back/forward restore
+ * cannot bring the overlay back. It only ever hides — it can never re-cover the
+ * page — so the two mechanisms cannot fight each other.
  */
 .lp-preloader {
   position: fixed;
@@ -228,6 +233,25 @@
   justify-content: center;
   background-color: var(--color-canvas);
   animation: lp-preloader-out var(--duration-slow) var(--ease-standard) 600ms forwards;
+}
+
+/*
+ * Hard off-switch. `visibility: hidden` already removes the overlay from
+ * hit-testing, so the finished keyframe was not in fact swallowing taps — but
+ * it left `pointer-events: auto` computed on a fixed, full-viewport, z-index
+ * 400 box, which is one careless `visibility` override away from doing so.
+ * This states the intent outright instead of relying on that.
+ *
+ * Keyed on `data-state`, NOT on `[aria-hidden='true']`: the element is
+ * decoratively `aria-hidden` from the very first frame, so an
+ * `[aria-hidden='true']` selector would hide the preloader before it ever
+ * showed.
+ */
+.lp-preloader[data-state='done'] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none !important;
+  animation: none !important;
 }
 
 .lp-preloader p {
@@ -246,6 +270,7 @@
   to {
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
   }
 }
 
@@ -1498,14 +1523,32 @@
 }
 
 /* Honeypot: removed from view and from the accessibility tree, but still in
-   the DOM and fillable by a naive bot. Off-screen rather than display:none,
-   which some bots skip. */
+   the DOM and fillable by a naive bot. Clipped rather than display:none,
+   which some bots skip.
+
+   It must NOT be pushed off-screen with a large negative offset. This element
+   is `position: absolute` with no positioned ancestor, so its containing block
+   is the initial containing block — it escapes the `overflow-x: clip` on `.lp`
+   entirely. In LTR that is invisible, because overflow past the inline start is
+   not scrollable. In RTL the scroll origin is the right edge, so the very same
+   `left: -9999px` became 9999px of real scrollable overflow: on /ar,
+   documentElement.scrollWidth measured 10389px against a clientWidth of 390px,
+   which let the whole page pan sideways and read as a frozen scroll on a phone.
+
+   The clip-rect pattern below occupies a 1px box at the inline start instead,
+   so it is still in the DOM, still fillable, and contributes no width. */
 .lp-hp {
   position: absolute;
-  left: -9999px;
+  inset-inline-start: 0;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
+  border: 0;
   overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .lp-contact-email {

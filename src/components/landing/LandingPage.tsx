@@ -13,6 +13,7 @@ import { MarketFlow } from './MarketFlow';
 import { Mark, SpinningMark } from './Mark';
 import { Orbit } from './Orbit';
 import { PathChooser } from './PathChooser';
+import { PreloaderRelease } from './PreloaderRelease';
 import { Reveal } from './Reveal';
 import { anchorFor } from './anchors';
 import { SelectionProvider } from './SelectionContext';
@@ -41,11 +42,14 @@ export function LandingPage({ locale }: { locale: Locale }) {
     // The approved design is a dark composition; the scope pins the colour
     // roles to the dark scheme for this subtree only. See src/lib/tokens.ts.
     <div className="lp" data-scheme="dark">
-      {/* 01 — preloader. CSS-only; retires itself without JavaScript. */}
+      {/* 01 — preloader. Retires itself on a keyframe, with no JavaScript
+          required; `PreloaderRelease` only enforces a 1500ms ceiling on top of
+          that and re-clears it after a back/forward restore. */}
       <div className="lp-preloader" aria-hidden="true">
         <SpinningMark size={72} />
         <p className="lp-mono">{copy.preloader.line}</p>
       </div>
+      <PreloaderRelease />
 
       <a href="#main" className="skip-link">
         {copy.nav.skip}
